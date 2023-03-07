@@ -5,13 +5,12 @@ from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl.worksheet.table import Table, TableStyleInfo
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Alignment
-from openpyxl.writer.excel import save_virtual_workbook
 import streamlit as st
+from tempfile import NamedTemporaryFile
 import zulip
 from stqdm import stqdm
 from time import strftime as stt
 import os
-from io import BytesIO
 
 
 def disc_apply(row):
@@ -290,8 +289,7 @@ def to_xlsx(matches_table, stats_table):
         c = ws2['A2']
         ws2.freeze_panes = c
 
-        xls_bytes = BytesIO(save_virtual_workbook(wb))
-        return xls_bytes
+        return wb
     except Exception as e:
         print('to_xlsx', e)
 
@@ -310,11 +308,18 @@ def zulip_msg():
 @st.cache_data
 def action(data_from_ul):
     try:
+        print('lilaliba')
         a, b = proc_wes(data=pd.read_excel(data_from_ul), warehouse=None, matches=min_match)
         wb_obj = to_xlsx(a, b)
 
-        zulip_msg()
-        return wb_obj
+        with NamedTemporaryFile() as tmp:
+            tmp.close()
+            wb_obj.save(tmp.name)
+            with open(tmp.name, 'rb') as f:
+                f.seek(0)
+                new_file_object = f.read()
+                zulip_msg()
+                return new_file_object
     except Exception as e:
         print('action', e)
 
