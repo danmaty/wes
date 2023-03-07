@@ -342,7 +342,7 @@ st.write('')
 uploaded_file = st.file_uploader(label='Remember to remove the empty top row before uploading WES data file!')
 
 if uploaded_file is not None:
-    to_dl = action(uploaded_file)
+    to_dl = action(uploaded_file.getvalue())
 
     st.download_button(
         label="Download Report",
