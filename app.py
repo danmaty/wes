@@ -11,6 +11,7 @@ import zulip
 from stqdm import stqdm
 from time import strftime as stt
 import os
+from io import BytesIO
 
 
 def disc_apply(row):
@@ -318,7 +319,7 @@ def action(data_from_ul):
                 f.seek(0)
                 new_file_object = f.read()
                 zulip_msg()
-                return new_file_object
+                return BytesIO(new_file_object)
     except Exception as e:
         print('action', e)
 
