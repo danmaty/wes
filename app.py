@@ -5,8 +5,8 @@ from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl.worksheet.table import Table, TableStyleInfo
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Alignment
+from openpyxl.writer.excel import save_virtual_workbook
 import streamlit as st
-from tempfile import NamedTemporaryFile
 import zulip
 from stqdm import stqdm
 from time import strftime as stt
@@ -290,7 +290,8 @@ def to_xlsx(matches_table, stats_table):
         c = ws2['A2']
         ws2.freeze_panes = c
 
-        return wb
+        xls_bytes = BytesIO(save_virtual_workbook(wb))
+        return xls_bytes
     except Exception as e:
         print('to_xlsx', e)
 
@@ -312,14 +313,8 @@ def action(data_from_ul):
         a, b = proc_wes(data=pd.read_excel(data_from_ul), warehouse=None, matches=min_match)
         wb_obj = to_xlsx(a, b)
 
-        with NamedTemporaryFile() as tmp:
-            tmp.close()
-            wb_obj.save(tmp.name)
-            with open(tmp.name, 'rb') as f:
-                f.seek(0)
-                new_file_object = f.read()
-                zulip_msg()
-                return BytesIO(new_file_object)
+        zulip_msg()
+        return wb_obj
     except Exception as e:
         print('action', e)
 
@@ -343,7 +338,7 @@ st.write('')
 uploaded_file = st.file_uploader(label='Remember to remove the empty top row before uploading WES data file!')
 
 if uploaded_file is not None:
-    to_dl = action(uploaded_file.getvalue())
+    to_dl = action(uploaded_file)
 
     st.download_button(
         label="Download Report",
