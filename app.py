@@ -305,7 +305,7 @@ def zulip_msg():
         print('zulip_msg', e)
 
 
-@st.cache
+@st.cache_data
 def action(data_from_ul):
     try:
         a, b = proc_wes(data=pd.read_excel(data_from_ul), warehouse=None, matches=min_match)
