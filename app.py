@@ -306,7 +306,7 @@ def zulip_msg():
 
 
 @st.cache_data
-def action(data_from_ul):
+def matching(data_from_ul):
     try:
         print('lilaliba')
         a, b = proc_wes(data=pd.read_excel(data_from_ul), warehouse=None, matches=min_match)
@@ -321,7 +321,7 @@ def action(data_from_ul):
                 zulip_msg()
                 return new_file_object
     except Exception as e:
-        print('action', e)
+        print('matching', e)
 
 
 st.set_page_config(
@@ -343,7 +343,7 @@ st.write('')
 uploaded_file = st.file_uploader(label='Remember to remove the empty top row before uploading WES data file!')
 
 if uploaded_file is not None:
-    to_dl = action(uploaded_file)
+    to_dl = matching(uploaded_file)
 
     st.download_button(
         label="Download Report",
