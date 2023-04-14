@@ -252,9 +252,9 @@ def to_xlsx(matches_table, stats_table):
             for cell in row:
                 cell.style = '20 % - Accent4'
 
-        for row in ws1[2:ws1.max_row]:
-            cella = row[0]
-            cella.alignment = Alignment(horizontal='left')
+#         for row in ws1[2:ws1.max_row]:
+#             cella = row[0]
+#             cella.alignment = Alignment(horizontal='left')
 
         for row in ws2[2:ws2.max_row]:
             cella = row[0]
